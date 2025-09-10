@@ -18,3 +18,10 @@ export type Photo = {
     isMain: boolean;
     memberId: string;
 }
+
+export type EditableMemberFields = {
+    displayName: string;
+    description?: string;
+    city: string;
+    country: string;
+}

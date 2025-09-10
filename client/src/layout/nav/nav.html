@@ -19,6 +19,10 @@
             <a routerLink="/errors" routerLinkActive="text-accent" [routerLinkActiveOptions]="{exact: true}">Error Test</a>
         </nav>
 
+        @if (busySvc.busyRequestCount() > 0) {
+            <span class="loading loading-spinner text-accent"></span>
+        }
+
         <div class="flex align-middle ml-auto gap-3">
             <div class="dropdown mr-5 dropdown-end">
                 <button tabindex="1" class="flex flex-col justify-center align-middle text-white cursor-pointer
@@ -28,7 +32,7 @@
                     </svg>
                     <span>{{selectedTheme()}}</span>
                 </button>
-                <ul tabindex="1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                <ul tabindex="1" class="dropdown-content menu bg-base-100 rounded-box z-50 w-52 p-2 shadow-sm">
                     @for(theme of themes; track $index){
                         <li (click)="handleSelectTheme(theme)"><a>{{theme}}</a></li>
                     }
@@ -41,8 +45,8 @@
                         <span>{{user.displayName}}</span>
                     </div>
                     <ul tabindex="0" class="dropdown-content dropdown-end menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                        <li><a>Edit Profile</a></li>
-                        <li><a (click)="logout()">Logout</a></li>
+                        <li><a routerLink="/members/{{user.id}}/profile">Edit Profile</a></li>
+                        <li (click)="logout()"><a>Logout</a></li>
                     </ul>
                 </div>
             } @else {
