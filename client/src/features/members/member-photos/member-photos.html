@@ -1,13 +1,33 @@
-@if(photos$ | async; as photos) {
+@if(!memberSvc.editMode()){
+  @if(photos(); as photos) {
     @if(photos.length > 0){
-        <div class="grid grid-cols-4 auto-rows-min gap-3 p-5 h-[65vh] overflow-auto">
-            @for(photo of photos; track photo.id) {
+      <div class="grid grid-cols-4 auto-rows-min gap-3 p-5 h-[65vh] overflow-auto">
+          @for(photo of photos; track photo.id) {
+            <div class="relative">
               <img [src]="photo.url" alt="user photo {{photo.id}}" class="w-full rounded-lg" />
-            }
-            @for(photo of generateMock; track $index) {
-              <img src="{{photo.url}}" alt="user photo {{$index}}" class="w-full rounded-lg" />
-            }
-        </div>
+                @if(accountSvc.currentUser()?.id === memberSvc.member()?.id) {
+                <app-star-button 
+                  class="absolute top-1 right-1"
+                  [selected]="photo.isMain" 
+                  (clickEvent)="setMainPhoto(photo)"
+                  ></app-star-button>
+                <app-delete-button 
+                  class="absolute top-1 left-1"
+                  (clickEvent)="deletePhoto(photo)" 
+                  [selected]="photo.isMain"
+                  ></app-delete-button>
+                }
+            </div>
+          }
+      </div>
+    } @else {
+      <div class="text-center text-gray-500">
+        No photos available.
+      </div>
+
     }
     
+}
+}@else {
+  <app-image-upload (uploadFile)="onUploadPhoto($event)" [loading]="loading()"></app-image-upload>
 }
