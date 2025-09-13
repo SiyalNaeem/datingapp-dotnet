@@ -39,6 +39,10 @@ export class MemberPhotos implements OnInit {
         this.memberSvc.editMode.set(false);
         this.photos.update(photos => [...photos, photo]);
         this.loading.set(false);
+
+        if(!this.accountSvc.currentUser()?.imageUrl){
+          this.setMainLocalPhoto(photo);
+        }
       },
       error: err => {
         console.log("Error uploading photo: ", err);
@@ -50,26 +54,7 @@ export class MemberPhotos implements OnInit {
   setMainPhoto(photo: Photo){
     this.memberSvc.setMainPhoto(photo.id).subscribe({
       next: () => {
-        const currentUser = this.accountSvc.currentUser();
-
-        if(currentUser){
-          currentUser.imageUrl = photo.url
-        }
-
-        this.accountSvc.setCurrentUser(currentUser as User);
-
-        this.memberSvc.member.update(member => ({
-          ...member,
-          imageUrl: photo.url
-        }) as Member);
-
-        this.photos.update(photos => {
-          photos.forEach(p => {
-            if(p.isMain) p.isMain = false;
-            if(p.id === photo.id) p.isMain = true;
-          });
-          return photos;
-        });
+        this.setMainLocalPhoto(photo);
       },
       error: err => {
         console.log("Error setting main photo: ", err);
@@ -86,5 +71,29 @@ export class MemberPhotos implements OnInit {
         console.log("Error deleting photo: ", err);
       }
     });
+  }
+
+  private setMainLocalPhoto(photo: Photo){ {
+    const currentUser = this.accountSvc.currentUser();
+
+      if(currentUser){
+        currentUser.imageUrl = photo.url
+      }
+
+      this.accountSvc.setCurrentUser(currentUser as User);
+
+      this.memberSvc.member.update(member => ({
+        ...member,
+        imageUrl: photo.url
+      }) as Member);
+
+      this.photos.update(photos => {
+        photos.forEach(p => {
+          if(p.isMain) p.isMain = false;
+          if(p.id === photo.id) p.isMain = true;
+        });
+        return photos;
+      });
+    }
   }
 }

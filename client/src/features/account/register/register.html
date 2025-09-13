@@ -2,17 +2,61 @@
 
     <div class="card-title justify-center text-3xl text-primary">Sign up</div>
     <div class="card-body w-full">
-        <form #registerForm="ngForm" class="flex flex-col gap-4 w-full" (ngSubmit)="register()">
-            <input type="text" class="input w-full" name="email" [(ngModel)]="creds.email" placeholder="Email" />
-            <input type="text" class="input w-full" name="displayName" [(ngModel)]="creds.displayName" placeholder="Display Name" />
-            <input type="password" class="input w-full" name="password" [(ngModel)]="creds.password" placeholder="Password" />
 
-            <div class="flex items-center justify-end gap-3">
-                <button (click)="cancel()" type="button" class="btn">Cancel</button>
-                <button class="btn btn-primary" type="submit">Register</button>
-            </div>
-            
-        </form>
+        <ul class="steps">
+            <li class="step step-primary">Credentials</li>
+            <li class="step" [class.step-primary]="currentFormStep() === 1">Profile</li>
+        </ul>
+
+        @if(currentFormStep() === 0){
+            <form [formGroup]="credentialsForm" class="flex flex-col gap-4 w-full steps" (ngSubmit)="register()">
+                <app-text-input class="mt-2" label="Email" type="email" formControlName="email"></app-text-input>
+    
+                <app-text-input label="Display Name" formControlName="displayName"></app-text-input>
+    
+                <app-text-input label="Password" type="password" formControlName="password"></app-text-input>
+    
+                <app-text-input label="Confirm Password" type="password" formControlName="confirmPassword"></app-text-input>
+    
+                <div class="flex items-center justify-end gap-3">
+                    <button (click)="cancel()" type="button" class="btn">Cancel</button>
+                    <button class="btn btn-primary" type="submit" [disabled]="!credentialsForm.valid" (click)="nextStep()">Next</button>
+                </div>
+                
+            </form>
+        } @else {
+            <form [formGroup]="profileForm" class="flex flex-col gap-4 w-full" (ngSubmit)="register()">
+
+                <div class="flex items-center gap-4 mt-2">
+                    <div class="font-semibold">Gender: </div>
+                    <label class="flex gap-3 items-center">
+                        <input class="radio radio-primary" type="radio" formControlName="gender" value="male"> Male
+                    </label>
+                    <label class="flex gap-3 items-center">
+                        <input class="radio radio-primary" type="radio" formControlName="gender" value="female"> Female
+                    </label>
+                </div>
+
+                <app-text-input [maxDate]="getMaxDate()" label="Date of Birth" type="date" formControlName="dateOfBirth"></app-text-input>
+                <app-text-input label="City" formControlName="city"></app-text-input>
+                <app-text-input label="Country" formControlName="country"></app-text-input>
+
+                <div class="flex items-center justify-end gap-3">
+                    <button (click)="prevStep()" type="button" class="btn">Back</button>
+                    <button class="btn btn-primary" type="submit" [disabled]="!profileForm.valid" (click)="register()">Register</button>
+                </div>
+            </form>
+        }
     </div>
+
+    @if(validationErrors().length > 0) {
+        <div class="mt-5 flex bg-gray-200 rounded-2xl w-1/2 p-3 mx-auto">
+            <ul class="flex flex-col text-error space-y-1">
+                @for(error of validationErrors(); track $index) {
+                    <li>* {{error}}</li>
+                }
+            </ul>
+        </div>
+    }
 
 </div>
