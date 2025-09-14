@@ -31,7 +31,8 @@ export class AccountService {
   }
 
   logout() {
-    localStorage.removeItem("user");
+    // localStorage.removeItem("user");
+    localStorage.clear();
     this.currentUser.set(null);
   }
   
