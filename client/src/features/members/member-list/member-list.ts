@@ -4,7 +4,7 @@ import { Member, MemberParams } from '../../../types/member';
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { MemberCard } from "../member-card/member-card";
-import { paginatedResult } from '../../../types/pagination';
+import { PaginatedResult } from '../../../types/pagination';
 import { Paginator } from "../../../shared/paginator/paginator";
 import { FilterModal } from '../filter-modal/filter-modal';
 
@@ -17,7 +17,7 @@ import { FilterModal } from '../filter-modal/filter-modal';
 export class MemberList implements OnInit {
 
   private memberSvc = inject(MemberService);
-  protected paginatedMembers = signal<paginatedResult<Member> | null>(null);
+  protected paginatedMembers = signal<PaginatedResult<Member> | null>(null);
   protected memberParams = new MemberParams();
   protected updatedParams = new MemberParams();
 

@@ -5,7 +5,7 @@ export type Pagination = {
     totalPages: number;
 }
 
-export type paginatedResult<T> = {
+export type PaginatedResult<T> = {
     metadata: Pagination;
     items: T[];
 }

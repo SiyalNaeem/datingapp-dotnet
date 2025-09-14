@@ -3,7 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { EditableMemberFields, Member, MemberParams, Photo } from '../../types/member';
 import { tap } from 'rxjs';
-import { paginatedResult } from '../../types/pagination';
+import { PaginatedResult } from '../../types/pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,7 @@ export class MemberService {
     if(memberParams.gender) {
       params = params.append('gender', memberParams.gender);
     }
-    return this.http.get<paginatedResult<Member>>(this.baseUrl + 'members', { params }).pipe(
+    return this.http.get<PaginatedResult<Member>>(this.baseUrl + 'members', { params }).pipe(
       tap(() => {
         localStorage.setItem('filters', JSON.stringify(memberParams));
       })
