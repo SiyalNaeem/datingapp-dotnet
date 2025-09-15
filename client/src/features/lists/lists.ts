@@ -47,6 +47,6 @@ export class Lists implements OnInit {
       this.pageNumber = event.pageNumber;
       this.pageSize = event.pageSize;
       this.loadLikes();
-    }
+  }
 
 }

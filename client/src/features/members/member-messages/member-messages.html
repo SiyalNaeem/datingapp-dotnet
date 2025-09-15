@@ -1,1 +1,44 @@
-<p>member-messages works!</p>
+<div class="flex flex-col w-full h-[70vh]">
+    <div class="flex flex-col grow overflow-y-auto">
+        @for (message of messages(); track message.id) {
+            <div 
+                class="chat"
+                [class.chat-start]="!message.currentMemberSender"
+                [class.chat-end]="message.currentMemberSender"
+                >
+                <div class="chat-image avatar">
+                    <div class="w-10 rounded-full">
+                    <img
+                        alt="User profile image"
+                        [src]="message.senderImageUrl"
+                    />
+                    </div>
+                </div>
+                <div class="chat-header">
+                    {{message.senderDisplayName}}
+                    <time class="text-xs opacity-50">{{message.messageSent | date: 'short' }}</time>
+                </div>
+                <div class="chat-bubble">{{message.content}}</div>
+                <div class="chat-footer opacity-50">
+                    @if(message.currentMemberSender && message.dateRead){
+                        Seen {{message.dateRead | timeAgo }}
+                    } @else if (message.currentMemberSender && !message.dateRead) {
+                        Not read
+                    } @else {
+                        Delivered
+                    }
+                </div>
+            </div>
+        }
+        <div #messageEndRef></div>
+    </div>
+
+    <div class="flex join w-full">
+        <input type="text" 
+            [(ngModel)]="newMessageContent" 
+            placeholder="Type your message here..." 
+            class="input w-full" (keyup.enter)="sendMessage()"/>
+            <!-- input-bordered join-item -->
+        <button class="btn btn-primary join-item" (click)="sendMessage()" type="submit">Send</button>
+    </div>
+</div>

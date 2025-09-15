@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Member> Members { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<MemberLike> Likes { get; set; }
+    public DbSet<Message> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,9 +31,24 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         .HasForeignKey(ml => ml.TargetMemberId)
         .OnDelete(DeleteBehavior.NoAction);
 
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Recipient)
+            .WithMany(m => m.MessagesReceived)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Sender)
+            .WithMany(m => m.MessagesSent)
+            .OnDelete(DeleteBehavior.Restrict);
+
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
             v => v.ToUniversalTime(),
             v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+        );
+
+        var nullableDateTimeConverter = new ValueConverter<DateTime?, DateTime?>(
+            v => v.HasValue ? v.Value.ToUniversalTime() : null,
+            v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null
         );
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -42,6 +58,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 if (property.ClrType == typeof(DateTime))
                 {
                     property.SetValueConverter(dateTimeConverter);
+                }
+                else if(property.ClrType == typeof(DateTime?))
+                {
+                    property.SetValueConverter(nullableDateTimeConverter);
                 }
             }
         }
