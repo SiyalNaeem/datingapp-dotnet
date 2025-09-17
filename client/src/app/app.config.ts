@@ -17,8 +17,9 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor, loadingInterceptor])),
     provideAppInitializer(async () => {
       const initSvc = inject(InitService);
+
       try {
-        return lastValueFrom(initSvc.init());
+        return await lastValueFrom(initSvc.init());
       } finally {
         const splashScreen = document.getElementById('splash-screen');
         if (splashScreen) {

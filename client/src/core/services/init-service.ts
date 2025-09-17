@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { AccountService } from './account-service';
 import { User } from '../../types/user';
-import { Observable, of } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { LikesService } from './likes-service';
 
 @Injectable({
@@ -12,15 +12,19 @@ export class InitService {
   private accountSvc = inject(AccountService);
   private likeSvc = inject(LikesService);
 
-  init(): Observable<null> {
-    const userJson = localStorage.getItem("user");
-    if (userJson) {
-      const user: User = JSON.parse(userJson);
-      this.accountSvc.currentUser.set(user);
-      this.likeSvc.getLikedIds();
-    }
+  init(): Observable<User> {
+    return this.accountSvc.refreshToken().pipe(
+      tap(user => {
+        this.accountSvc.setCurrentUser(user);
+        this.accountSvc.startRefreshTokenInterval();
+      })
+    )
+    // const userJson = localStorage.getItem("user");
+    // if (userJson) {
+    //   const user: User = JSON.parse(userJson);
+    // }
 
-    return of(null);
+    // return of(null);
   }
   
 }

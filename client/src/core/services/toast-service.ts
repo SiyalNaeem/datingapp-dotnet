@@ -14,7 +14,7 @@ export class ToastService {
     if (!container) {
       container = document.createElement('div');
       container.id = 'toast-container';
-      container.className = 'toast toast-bottom toast-end';
+      container.className = 'toast toast-bottom toast-end z-50';
       // container.style.position = 'fixed';
       // container.style.top = '20px';
       // container.style.right = '20px';
