@@ -4,6 +4,9 @@ import { environment } from '../../environments/environment';
 import { EditableMemberFields, Member, MemberParams, Photo } from '../../types/member';
 import { tap } from 'rxjs';
 import { PaginatedResult } from '../../types/pagination';
+import { AccountService } from './account-service';
+import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
+import { Message } from '../../types/message';
 
 @Injectable({
   providedIn: 'root'

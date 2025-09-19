@@ -25,7 +25,6 @@ public class MessageRepository(AppDbContext context) : IMessagesRepository
         return await context.Messages.FindAsync(id);
     }
 
-    // MessageParams messageParams
     public async Task<PaginatedResult<MessageDto>> GetMessagesForMember(MessageParams messageParams)
     {
         var query = context.Messages.OrderByDescending(x => x.MessageSent).AsQueryable();
@@ -55,5 +54,36 @@ public class MessageRepository(AppDbContext context) : IMessagesRepository
     public async Task<bool> SaveAllAsync()
     {
         return await context.SaveChangesAsync() > 0;
+    }
+
+    public void AddGroup(Group group)
+    {
+        context.Groups.Add(group);
+    }
+
+    public async Task RemoveConnection(Connection connection)
+    {
+        await context.Connections
+        .Where(x => x.ConnectionId == connection.ConnectionId)
+        .ExecuteDeleteAsync();
+    }
+
+    public async Task<Connection?> GetConnection(string connectionId)
+    {
+        return await context.Connections.FindAsync(connectionId);
+    }
+
+    public async Task<Group?> GetMessageGroup(string groupName)
+    {
+        return await context.Groups
+            .Include(g => g.Connections)
+            .SingleOrDefaultAsync(g => g.Name == groupName);
+    }
+
+    public async Task<Group?> GetGroupForConnection(string connectionId)
+    {
+        return await context.Groups
+            .Include(g => g.Connections)
+            .SingleOrDefaultAsync(g => g.Connections.Any(c => c.ConnectionId == connectionId));
     }
 }

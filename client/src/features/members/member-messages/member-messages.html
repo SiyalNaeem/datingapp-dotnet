@@ -1,16 +1,16 @@
 <div class="flex flex-col w-full h-[70vh]">
     <div class="flex flex-col grow overflow-y-auto">
-        @for (message of messages(); track message.id) {
+        @for (message of messageSvc.messageThread(); track message.id) {
             <div 
                 class="chat"
                 [class.chat-start]="!message.currentMemberSender"
                 [class.chat-end]="message.currentMemberSender"
                 >
-                <div class="chat-image avatar">
+                <div class="chat-image avatar" [class.avatar-online]="presenceSvc.onlineUsers().includes(message.senderId || message.recipientId)">
                     <div class="w-10 rounded-full">
                     <img
                         alt="User profile image"
-                        [src]="message.senderImageUrl"
+                        [src]="message.senderImageUrl || './user.png'"
                     />
                     </div>
                 </div>
