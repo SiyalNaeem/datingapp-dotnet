@@ -55,8 +55,4 @@ public class LikesRepository(AppDbContext context) : ILikesRepository
 
     }
 
-    public async Task<bool> SaveAllAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }

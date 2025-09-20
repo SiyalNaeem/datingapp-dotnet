@@ -15,14 +15,22 @@ export class LikesService {
 
   likedIds = signal<string[]>([]);
 
-  toggleLike(userId: string) {
-    return this.http.post(`${this.baseUrl}likes/${userId}`, {})
+  toggleLike(targetMemberId: string) {
+    return this.http.post(`${this.baseUrl}likes/${targetMemberId}`, {}).subscribe({
+      next: () => {
+        if(this.likedIds().includes(targetMemberId)){
+          this.likedIds.update(ids => ids.filter(id => id !== targetMemberId));
+        } else {
+          this.likedIds.update(ids => [...ids, targetMemberId]);
+        }
+      }
+    })
     // .pipe(tap(() => {
     //   this.likedIds.update(ids => {
-    //     if (ids.includes(userId)) {
-    //       return ids.filter(id => id !== userId);
+    //     if (ids.includes(targetMemberId)) {
+    //       return ids.filter(id => id !== targetMemberId);
     //     } else {
-    //       ids.push(userId);
+    //       ids.push(targetMemberId);
     //     }
     //   });
   }

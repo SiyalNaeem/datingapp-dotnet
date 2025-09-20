@@ -6,6 +6,7 @@ using API.Entities;
 using API.Extensions;
 using API.Interfaces;
 using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -96,7 +97,22 @@ namespace API.Controllers
             await SetRefreshTokenCookie(user);
             return await user.ToDto(tokenService);
         }
-    }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout()
+        {
+            await userManager.Users
+                .Where(u => u.Id == User.GetMemberId())
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(u => u.RefreshToken, _ => null)
+                    .SetProperty(u => u.RefreshTokenExpiry, _ => null)
+                    );
+
+            Response.Cookies.Delete("refreshToken");
+            return Ok();
+        }
+        
+    }
 
 }

@@ -23,6 +23,7 @@ export class Nav implements OnInit {
   protected selectedTheme = signal(localStorage.getItem('theme') || 'light');
   protected themes = themes;
   protected busySvc = inject(BusyService);
+  protected loading = signal(false);
 
   ngOnInit() {
     document.documentElement.setAttribute('data-theme', this.selectedTheme());
@@ -36,18 +37,27 @@ export class Nav implements OnInit {
     elem?.blur();
   }
 
+  handleSelectUserItem() {
+    const elem = document.activeElement as HTMLElement;
+    elem?.blur();
+  }
+
   login() {
-    this.accountSvc.login(this.creds).subscribe(
-      (response: User) => {
+    this.loading.set(true);
+    this.accountSvc.login(this.creds).subscribe({
+      next: (response: User) => {
         this.accountSvc.currentUser.set(response);
         this.router.navigateByUrl('/members');
         this.toastSvc.showSuccess("Login successful!");
         this.creds = {};
       },
-      (error: any) => {
+      error: (error: any) => {
         this.toastSvc.showError(error.error || "Login failed. Please check your credentials.");
+      },
+      complete: () => {
+        this.loading.set(false);
       }
-    );
+    });
   }
 
   logout() {

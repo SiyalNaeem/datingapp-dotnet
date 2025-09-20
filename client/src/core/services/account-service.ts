@@ -62,10 +62,16 @@ export class AccountService {
   }
 
   logout() {
-    localStorage.removeItem("filters");
-    this.currentUser.set(null);
-    this.likesSvc.clearLikedIds();
-    this.presenceSvc.stopHubConnection();
+    this.http.post(this.baseUrl + 'account/logout', {}, {withCredentials: true})
+      .subscribe({
+        next: () => {
+          localStorage.removeItem("filters");
+          this.currentUser.set(null);
+          this.likesSvc.clearLikedIds();
+          this.presenceSvc.stopHubConnection();
+        },
+        error: error => console.log(error)
+      });
   }
 
   getRolesForToken(user: User): string[] {
